@@ -1,7 +1,7 @@
 ﻿#ifndef SSLHELPER_H
 #define SSLHELPER_H
 
-#include <qtnetworkng/qtnetworkng.h>
+#include "qtnetworkng.h"
 
 namespace NSNetwork {
     class SSLHelper

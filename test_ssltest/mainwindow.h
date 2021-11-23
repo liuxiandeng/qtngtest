@@ -1,9 +1,8 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <server/server.h>
-#include <sslhelper.h>
+#include <QtWidgets/QMainWindow>
+#include "sslhelper.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

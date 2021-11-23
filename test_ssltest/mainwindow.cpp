@@ -3,10 +3,13 @@
 #include <QDebug>
 
 
+using namespace qtng;
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , group(new qtng::CoroutineGroup())
+    , group(new CoroutineGroup())
 {
     ui->setupUi(this);
     initSsl();
@@ -20,12 +23,12 @@ MainWindow::~MainWindow()
 
 int MainWindow::initSsl()
 {
-    qtng::PrivateKey privatekey;
+    PrivateKey privatekey;
     QFile file1("./privatekey/client_private.key");
     if(!file1.open(QFile::ReadOnly))
         return -1;
 
-    privatekey = qtng::PrivateKey::load(file1.readAll(), qtng::Ssl::Pem, "racobit123456");
+    privatekey = PrivateKey::load(file1.readAll(), Ssl::Pem, "racobit123456");
     file1.close();
     sslConfig.setLocalCertificate("./certificate/client.cert");
     sslConfig.setPrivateKey(privatekey);
@@ -37,16 +40,18 @@ int MainWindow::initSsl()
 void MainWindow::on_pushButton_clicked()
 {
     group->spawnWithName("recv", [this] {
-        QSharedPointer<qtng::SslSocket> conn(qtng::SslSocket::createConnection("192.168.10.34", 8001, sslConfig));
+        QSharedPointer<SslSocket> conn(SslSocket::createConnection("news.163.com", 443, sslConfig));
         if (!conn) {
             qDebug() << "can not connect to remote host.";
             return;
         }
+        conn->sendall("GET /\r\n\r\n");
         while (true) {
-            const QByteArray &buf = conn->recv(1024 * 8);
+            const QByteArray &buf = conn->recv(1);
             if (buf.isEmpty()) {
                 return;
             }
+            Coroutine::sleep(0.1);
             qDebug() << buf;
         }
     });
